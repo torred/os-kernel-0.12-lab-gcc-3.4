@@ -21,7 +21,7 @@ DEP	+= -E -I../include
 	@$(AS) -o $*.o $<
 
 fs.o: $(OBJS)
-	@$(LD) -r -o fs.o $(OBJS)
+	@$(LD) $(LDFLAGS) -o fs.o $(OBJS)
 
 clean:
 	@$(RM) -f $(CLEAR_FILE)

@@ -77,7 +77,21 @@ extern void mem_init(long start, long end);		/* 内存管理初始化mm/memory.c
 extern long rd_init(long mem_start, int length);/* 虚拟盘初始化blk_drv/ramdisk.c */
 extern long kernel_mktime(struct tm * tm);		/* 计算系统开机启动时间(秒) */
 
-/* 内核专用sprintf()函数，产生格式化信息并输出到指定缓冲区str中 */
+// fork系统调用函数,该函数作为static inline表示内联函数，主要用来在进程0里面创建进程1的时候内联，使进程0在生成进程1的时候
+// 不使用自己的用户堆栈
+static inline long fork_for_process0() {
+	long __res;
+	__asm__ volatile (
+		"int $0x80\n\t"  														/* 调用系统中断0x80 */
+		: "=a" (__res)  														/* 返回值->eax(__res) */
+		: "0" (2));  															/* 输入为系统中断调用号__NR_name */
+	if (__res >= 0)  															/* 如果返回值>=0,则直接返回该值 */
+		return __res;
+	errno = -__res;  															/* 否则置出错号,并返回-1 */
+	return -1;
+}
+
+// 内核专用sprintf()函数.该函数用于产生格式化信息并输出到指定缓冲区str中.参数'*fmt'指定输出将采用格式.
 static int sprintf(char * str, const char *fmt, ...)
 {
 	va_list args;
@@ -210,10 +224,12 @@ int main(void)		/* This really is void, no error here. */
 	floppy_init();							/* 软驱初始化 */
 
 	sti();									/* 开启中断 */
-	move_to_user_mode();
-	if (!fork()) {							/* we count on this going ok */
-		/* 创建任务1（init进程） */
-		init();
+	printk(" Linux0.12 Kernel Init Finished, Ready Start Process0\n");
+	// 下面过程通过在堆栈中设置的参数,利用中断返回指令启动任务0执行.
+	move_to_user_mode();											// 移到用户模式下执行.(include/asm/system.h)
+	//printk(" =====================debug========================\n");
+	if (!fork_for_process0()) {										/* we count on this going ok */
+		init();														// 在新建的子进程(任务1即init进程)中执行.
 	}
 /*
  *   NOTE!!   For any other task 'pause()' would mean we have to get a

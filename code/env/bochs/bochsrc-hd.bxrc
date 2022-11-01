@@ -1,4 +1,5 @@
-megs: 32
+# 此处设置为16M，linux 0.11/0.12最大只支持16M
+megs: 16
 
 romimage:    file=$BXSHARE/BIOS-bochs-latest
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest

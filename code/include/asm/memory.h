@@ -16,11 +16,12 @@
  * @param[in]	dest	复制的目的地址
  * @param[in]	src		复制的源地址
  * @param[in]	n		复制字节数
+ * %0 - edi（目的地址dest），%1 - esi（源地址src），%2 - ecx（字节数n）。
  */
-#define memcpy(dest, src, n) ({ 										\
-	void * _res = dest;													\
-	__asm__ ("cld;rep;movsb"											\
-		::"D" ((long)(_res)),"S" ((long)(src)),"c" ((long) (n))			\
-		);																\
-	_res;																\
+#define memcpy(dest, src, n) ({ \
+void * _res = dest; \
+__asm__ ("cld; rep; movsb"       /* 从ds:[esi]复制到es:[edi]，并且esi++，edi++,共复制ecx(n)字节。 */  \
+	::"D" ((long)(_res)), "S" ((long)(src)), "c" ((long) (n)) \
+	:); \
+_res; \
 })

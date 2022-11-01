@@ -16,7 +16,7 @@
 		"cld\n\t"         												\
 		"rep\n\t" 														\
 		"stosl" 														\
-		::"a" (0), "c" (BLOCK_SIZE / 4), "D" ((long) (addr)))
+		::"a" (0), "c" (BLOCK_SIZE / 4), "D" ((long) (addr)):)
 
 /**
  * 把指定地址开始的第nr个位偏移处的比特位置位(nr可大于32!)
@@ -28,7 +28,7 @@
  * @retval		返回addr+nr处比特位的原位值	
  */
 #define set_bit(nr, addr) ({											\
-	register int res; 													\
+	register int res __asm__("ax"); 													\
 	__asm__ __volatile__("btsl %2, %3\n\tsetb %%al"						\
 				:"=a" (res)												\
 				:"0" (0),"r" (nr),"m" (*(addr))); 						\
@@ -41,7 +41,7 @@
  * @retval		返回addr+nr处比特位的原位值的反码
  */
 #define clear_bit(nr, addr) ({											\
-	register int res;													\
+	register int res __asm__("ax");													\
 	__asm__ __volatile__("btrl %2, %3\n\tsetnb %%al"					\
 			:"=a" (res) 												\
 			:"0" (0), "r" (nr), "m" (*(addr))); 						\
@@ -69,7 +69,7 @@
 			"jl 1b\n"													\
 		"3:"															\
 		:"=c" (__res)													\
-		:"c" (0), "S" (addr)); 											\
+		:"c" (0), "S" (addr):"ax","dx"); 											\
 	__res;})
 
 /**

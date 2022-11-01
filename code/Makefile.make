@@ -46,7 +46,7 @@ OBJCOPY = $(QUIET_OBJCOPY)$(TARGET)objcopy
 RM = $(QUIET_RM)rm
 TAR = $(QUIET_TAR)tar
 
-CC	= $(QUIET_CC)$(TARGET)gcc-3.4
+CC	= $(QUIET_CC)$(TARGET)gcc
 CPP	= $(QUIET_CC)$(TARGET)cpp -nostdinc
 DEP	= $(TARGET)cpp -nostdinc
 

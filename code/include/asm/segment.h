@@ -3,6 +3,7 @@
 /**
  * 读取fs段中指定地址处的字节
  * @param[in]	addr	指定的内存地址
+ * %0 - (返回的字节_v);%1 - (内存地址addr)
  * @retval		返回内存fs[addr]处的字节
  */
 static inline unsigned char get_fs_byte(const char * addr)
@@ -16,6 +17,7 @@ static inline unsigned char get_fs_byte(const char * addr)
 /**
  * 读取fs段中指定地址处的字
  * @param[in]	addr	指定的内存地址
+ * %0 - (返回的字_v);%1 - (内存地址addr)
  * @retval		返回内存fs[addr]处的字
  */
 static inline unsigned short get_fs_word(const unsigned short *addr)
@@ -29,13 +31,14 @@ static inline unsigned short get_fs_word(const unsigned short *addr)
 /**
  * 读取fs段中指定地址处的长字(4字节)
  * @param[in]	addr	指定的内存地址
+ * %0 - (返回的长字_v);%1 - (内存地址addr)
  * @retval		返回内存fs[addr]处的长字
  */
 static inline unsigned long get_fs_long(const unsigned long *addr)
 {
 	unsigned long _v;
 
-	__asm__ ("movl %%fs:%1,%0":"=q" (_v):"m" (*addr));
+	__asm__ ("movl %%fs:%1,%0":"=q" (_v):"m" (*addr)); \
 	return _v;
 }
 
@@ -43,6 +46,7 @@ static inline unsigned long get_fs_long(const unsigned long *addr)
  * 将一字节存放在fs段中指定内存地址处
  * @param[in]	val		字节值
  * @param[in]	addr	内存地址
+ * %0 - 寄存器(字节值val);%1 - (内存地址addr).
  */
 static inline void put_fs_byte(char val,char *addr)
 {
@@ -53,6 +57,7 @@ static inline void put_fs_byte(char val,char *addr)
  * 将一字存放在fs段中指定内存地址处
  * @param[in]	val		字值
  * @param[in]	addr	内存地址
+ * %0 - 寄存器(字值val);%1 - (内存地址addr).
  */
 static inline void put_fs_word(short val,short * addr)
 {
@@ -63,6 +68,7 @@ static inline void put_fs_word(short val,short * addr)
  * 将一长字存放在fs段中指定内存地址处
  * @param[in]	val		长字值
  * @param[in]	addr	内存地址
+ * %0 - 寄存器(长字值val);%1 - (内存地址addr).
  */
 static inline void put_fs_long(unsigned long val,unsigned long * addr)
 {

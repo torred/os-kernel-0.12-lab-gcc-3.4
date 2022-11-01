@@ -103,7 +103,7 @@ struct task_struct *last_task_used_math = NULL;		/* 上一个使用过协处理�
 
 struct task_struct * task[NR_TASKS] = {&(init_task.task), };
 
-long user_stack [ PAGE_SIZE>>2 ] ;  /* 用户堆栈（4 * 1K） */
+long user_stack [ PAGE_SIZE*2>>2 ] ;  /* 用户堆栈（4 * 1K） */
 
 /* Tip: Intel CPU执行堆栈操作时总是先递减堆栈指针ESP值，然后在ESP指针处保存入栈内容 */
 /* 下面结构用于设置堆栈SS:ESP，SS被设置为内核数据段选择符（0x10），ESP被设置为指向user_stack数
@@ -112,7 +112,7 @@ long user_stack [ PAGE_SIZE>>2 ] ;  /* 用户堆栈（4 * 1K） */
 struct {
 	long * a;
 	short b;
-	} stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };
+	} stack_start = { & user_stack [PAGE_SIZE*2>>2] , 0x10 };
 
 /*
  *  'math_state_restore()' saves the current math information in the

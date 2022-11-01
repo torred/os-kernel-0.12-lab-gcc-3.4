@@ -3,13 +3,13 @@
  * structures etc.
  */
 /*
- * 本文件含有某些重要文件表结构的定义等。
+ * 本文件含有某些重要文件表结构的定义等.
  */
 
 #ifndef _FS_H
 #define _FS_H
 
-#include <sys/types.h>
+#include <sys/types.h>					// 类型头文件.定义了基本的系统数据类型.
 
 /* devices are as follows: (same as minix, so we can use the minix
  * file system. These are major numbers.)
@@ -24,7 +24,7 @@
  * 7 - unnamed pipes
  */
 /*
- * 系统所含的设备如下：(与minix系统的一样，所以我们可以使用minix的文件系统。以下这些是主设备号。)
+ * 系统所含的设备如下:(与minix系统的一样,所以我们可以使用minix的文件系统.以下这些是主设备号.)
  *
  * 0 - unused (nodev)	没有用到
  * 1 - /dev/mem			内存设备
@@ -93,7 +93,7 @@ void buffer_init(long buffer_end);			/* 高速缓冲区初始化 */
 typedef char buffer_block[BLOCK_SIZE];	/* 块缓冲区 */
 
 /**
- * 块高速缓冲头数据结构(重要) 
+ * 块高速缓冲头数据结构(重要) ，在程序中常用bh来表示buffer_head类型的缩写.
  */
 struct buffer_head {
 	char * b_data;						/* pointer to data block (1024 bytes) */	
@@ -132,7 +132,7 @@ struct d_inode {
 };
 
 /**
- * 内存中的索引节点(iNode)数据结构 
+ * 内存中的索引节点(iNode)数据结构，前7项与d_inode完全一样.
  */
 struct m_inode {
 	unsigned short i_mode;
@@ -174,7 +174,7 @@ struct super_block {
 	unsigned short s_imap_blocks;		/* i节点位图所占用的数据块数 */
 	unsigned short s_zmap_blocks;		/* 逻辑块位图所占用的数据块数 */
 	unsigned short s_firstdatazone;		/* 第一个数据逻辑块号 */
-	unsigned short s_log_zone_size;		/* log2(数据块数/逻辑块) */
+	unsigned short s_log_zone_size;		/* log2(数据块数/逻辑块)，以2为底 */
 	unsigned long s_max_size;			/* 文件最大长度 */
 	unsigned short s_magic;				/* 文件系统魔数 */
 	/* These are only in memory */		/* 以下是内存中特有的 */
@@ -197,7 +197,7 @@ struct d_super_block {
 	unsigned short s_imap_blocks;		/* i节点位图所占用的数据块数 */
 	unsigned short s_zmap_blocks;		/* 逻辑块位图所占用的数据块数 */
 	unsigned short s_firstdatazone;		/* 第一个数据逻辑块号 */
-	unsigned short s_log_zone_size;		/* log(数据块数/逻辑块) */
+	unsigned short s_log_zone_size;		/* log(数据块数/逻辑块)，(以2为底) */
 	unsigned long s_max_size;			/* 文件最大长度 */
 	unsigned short s_magic;				/* 文件系统魔数 */
 };
@@ -266,13 +266,13 @@ extern struct m_inode * iget(int dev, int nr);
 /* 从i节点表中获取一个空闲i节点项 */
 extern struct m_inode * get_empty_inode(void);
 
-/* 获取(申请)管道节点 */
+/* 获取（申请一）管道节点。返回为i节点指针（如果是NULL则失败）。 */
 extern struct m_inode * get_pipe_inode(void);
 
-/* 在哈希表中查找指定的数据块 */
+/* 在哈希表中查找指定的数据块，。返回找到的缓冲头指针 */
 extern struct buffer_head * get_hash_table(int dev, int block);
 
-/* 从设备读取指定块 */
+/* 从设备读取指定块，(首先会在hash表中查找) */
 extern struct buffer_head * getblk(int dev, int block);
 
 /* 读/写数据块 */
@@ -293,10 +293,10 @@ extern void bread_page(unsigned long addr, int dev, int b[4]);
 /* 读取头一个指定的数据块，并标记后续将要读的块 */
 extern struct buffer_head * breada(int dev, int block, ...);
 
-/* 向设备dev申请一个磁盘块 */
+/* 向设备dev申请一个磁盘块（区段，逻辑块）。返回逻辑块号。 */
 extern int new_block(int dev);
 
-/* 释放设备数据区中的逻辑块 */
+/* 释放设备数据区中的逻辑块（区段，逻辑块）block。 */
 extern int free_block(int dev, int block);
 
 /* 为设备dev建立一个新i节点 */
