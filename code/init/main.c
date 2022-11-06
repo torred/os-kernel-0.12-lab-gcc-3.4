@@ -81,13 +81,13 @@ extern long kernel_mktime(struct tm * tm);		/* 计算系统开机启动时间(�
 // 不使用自己的用户堆栈
 static inline long fork_for_process0() {
 	long __res;
-	__asm__ volatile (
-		"int $0x80\n\t"  														/* 调用系统中断0x80 */
-		: "=a" (__res)  														/* 返回值->eax(__res) */
-		: "0" (2));  															/* 输入为系统中断调用号__NR_name */
-	if (__res >= 0)  															/* 如果返回值>=0,则直接返回该值 */
+	__asm__ volatile (  \
+		"int $0x80\n\t"  						/* 调用系统中断0x80 */ \
+		: "=a" (__res)  						/* 返回值->eax(__res) */ \
+		: "0" (2));  							/* 输入为系统中断调用号__NR_name */ 
+	if (__res >= 0)  							/* 如果返回值>=0,则直接返回该值 */
 		return __res;
-	errno = -__res;  															/* 否则置出错号,并返回-1 */
+	errno = -__res;  							/* 否则置出错号,并返回-1 */
 	return -1;
 }
 
@@ -227,7 +227,6 @@ int main(void)		/* This really is void, no error here. */
 	printk(" Linux0.12 Kernel Init Finished, Ready Start Process0\n");
 	// 下面过程通过在堆栈中设置的参数,利用中断返回指令启动任务0执行.
 	move_to_user_mode();											// 移到用户模式下执行.(include/asm/system.h)
-	//printk(" =====================debug========================\n");
 	if (!fork_for_process0()) {										/* we count on this going ok */
 		init();														// 在新建的子进程(任务1即init进程)中执行.
 	}
