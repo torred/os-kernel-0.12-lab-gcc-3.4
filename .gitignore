@@ -4,3 +4,5 @@
 .tags
 .tags_sorted_by_file
 bochsout.txt
+*.sublime-project
+*.sublime-workspace
